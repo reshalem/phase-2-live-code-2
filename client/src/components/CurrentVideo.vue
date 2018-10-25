@@ -11,14 +11,14 @@
         <p class="card-text text-left">From Channel <i class="fas fa-arrow-circle-right mx-2"></i> {{video.snippet.channelTitle}}</p>
       </div>
     </div>
-    <button class="btn btn-sm btn-success" @click="likeVideo(video.id.videoId)">{{likeStatement}}</button><br />
+    <button class="btn btn-sm btn-success" v-if="islogin" @click="likeVideo(video.id.videoId)">{{likeStatement}}</button><br />
   </div>
 </template>
 
 <script>
 export default {
   name: 'CurrentVideo',
-  props: ['id', 'videos'],
+  props: ['id', 'videos', 'islogin'],
   data() {
     return {
       video: {},

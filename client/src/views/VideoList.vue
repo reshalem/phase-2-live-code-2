@@ -45,7 +45,7 @@
       </div>
 
       <div class="col-xl-5">
-        <router-view :videos="videos"></router-view>
+        <router-view :videos="videos" :islogin="isLogin"></router-view>
       </div>
     </div>
   </div>
