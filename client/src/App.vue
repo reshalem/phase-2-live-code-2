@@ -29,17 +29,80 @@
               </router-link>
             </li>
           </ul>
-          <ul class="navbar-nav ml-auto">
+          <ul class="navbar-nav ml-auto" v-if="!isLogin">
             <li class="nav-item">
-              <a href="JavaScript:Void(0);" class="btn btn-danger">Logout</a>
+              <form @submit.prevent="login()" class="form-inline mr-2">
+                <div class="form-group">
+                    <input v-model="loginUser.email" type="text" class="form-control mr-3" placeholder="Email">
+                </div>
+                <div class="form-group">
+                    <input v-model="loginUser.password" type="password" class="form-control mr-3" placeholder="Password">
+                </div>
+                <button type="submit" class="btn btn-outline-light">Login</button>
+              </form>
+            </li>
+          </ul>
+          <ul class="navbar-nav ml-auto" v-if="isLogin">
+            <li class="nav-item">
+              <a href="JavaScript:Void(0);" class="btn btn-danger" @click="logout">Logout</a>
             </li>
           </ul>
         </div>
       </div>
     </nav>
-    <router-view/>
+    <router-view :isLogin="isLogin" :checktoken="checkToken"></router-view>
   </div>
 </template>
+
+<script>
+  export default {
+  data () {
+    return {
+      isLogin: false,
+      loginUser: {
+        email: '',
+        password: ''
+      }
+    }
+  },
+  methods: {
+      login: function() {
+          axios({
+              method: 'POST',
+              url: `http://localhost:3000/login`,
+              data: {
+                  email: this.loginUser.email,
+                  password: this.loginUser.password
+              }
+          })
+              .then((result) => {
+                  localStorage.setItem('token', result.data.token)
+                  this.checkToken()
+                  this.loginUser.email = ''
+                  this.loginUser.password = ''
+              })
+              .catch((err) => {
+                  console.log(err)
+              })
+      },
+      checkToken: function() {
+          let token = localStorage.getItem('token')
+          if (token) {
+              this.isLogin = true
+          } else {
+              this.isLogin = false
+          }
+      },
+      logout: function() {
+          localStorage.removeItem('token')
+          this.checkToken()
+      }
+  },
+  created() {
+        this.checkToken();
+  }
+}
+</script>
 
 <style>
 #app {

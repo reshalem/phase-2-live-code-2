@@ -44,16 +44,6 @@ class UserController {
                 res.status(500).json(err);
             });
     }
-    
-    // static searchEvent(req, res) {
-    //   Event.find({name: new RegExp(req.params.keyword, 'i')})
-    //       .then(function(events) {
-    //           res.status(200).json(events);
-    //       })
-    //       .catch(function(err) {
-    //           res.status(500).json(err.message); 
-    //       });
-    // }
 
     static getUserProfile(req, res) {
         User.findOne({username: req.user.username})
@@ -63,6 +53,40 @@ class UserController {
             .catch(function(err) {
                 res.status(500).json(err);
             });
+    }
+
+    static like(req, res) {
+      User.findById(req.user._id)
+          .then(function(user) {
+            if (user.liked.indexOf(req.body.id) === -1) {
+                user.update({
+                    $push: {
+                        liked: req.body.id
+                    }
+                })
+                    .then(function(result) {
+                        res.status(200).json(result);
+                    })
+                    .catch(function(err) {
+                        res.status(500).json(err);
+                    });
+            } else {
+                user.update({
+                    $pull: {
+                        liked: req.body.id
+                    }
+                })
+                    .then(function(result) {
+                        res.status(200).json(result);
+                    })
+                    .catch(function(err) {
+                        res.status(500).json(err);
+                    });
+            }
+          })
+          .catch(function(err) {
+              res.status(500).json(err);
+          });
     }
 }
 
